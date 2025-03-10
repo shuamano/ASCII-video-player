@@ -1,13 +1,16 @@
 from PIL import Image
 import statistics
 import cv2
-import os
 import time
+import sys
 
-# replace with whatever video path you want
+#replace with whatever video path you want
 video_path = "image_to_text/【東方】Bad Apple!! ＰＶ【影絵】.mp4"
 cap = cv2.VideoCapture(video_path)
 length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+#clear the initial output in the terminal
+print(chr(27) + "[2J")
 
 for frame_number in range(1, length):
     start = time.time()
@@ -24,7 +27,7 @@ for frame_number in range(1, length):
     ascii_line = []
     flip_flop = 1
 
-    # scaling function
+    #scaling function
     def scale(width, height):
         scale_factor = max(width, height) / 130  # set the resolution here
         new_width = round(width / scale_factor)
@@ -43,13 +46,13 @@ for frame_number in range(1, length):
         for x in range(1, resize[0]): # determines ascii char for every pixel in row (iterates through colummns)
             pixel = px[x, y]
 
-            # convert the rgb value of the pixel to a grayscale, then normalize to a range of 23 for the ascii chars
+            #convert the rgb value of the pixel to a grayscale, then normalize to a range of 70 for the ascii chars
             grayscale = ((0.2989 * pixel[0] + 0.5870 * pixel[1] + 0.1140 * pixel[2])/255)*23
             current_line.append(int(grayscale))
 
             #print(f"Grayscale: {grayscale}, RGB: {pixel}, ASCII: {ascii_grayscale[int(grayscale)]}")
         
-        # on the second row and onward, compare the current and previous row and turn them into one averaged row
+        #on the second row and onward, compare the current and previous row and turn them into one averaged row
         if flip_flop == 1:    
             if y > 1:
                 for i in range(1, resize[0]-1):
@@ -64,8 +67,10 @@ for frame_number in range(1, length):
             
     lines_count = text_image.count('\n') + 1
     end = time.time()
-
-    # clear the terminal and print the next frame (steady ouput)
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(text_image)
-    print(f"Resolution:{resize}, Frame {frame_number}/{length}, Frametime: {(end-start)*1000}ms")
+    
+    #move cursor to start pos and print the next frame (steady ouput)
+    sys.stdout.write("\033[F" * len(text_image.split("\n")))
+    sys.stdout.write(f"{text_image}\n Resolution:{resize}, Frame {frame_number}/{length}, Frametime: {(end-start)*1000}ms")
+    sys.stdout.flush()
+    
+    
