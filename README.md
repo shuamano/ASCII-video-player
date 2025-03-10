@@ -1,6 +1,6 @@
 # ASCII-video-player
 * it does exactly what it sounds like
-* can play videos in real time,(if ur lucky) outputting to terminal. just replace the path with whatever video you want
+* can play videos in real time,(at 130p) outputting to terminal. just replace the path with whatever video you want
 * BAD APLE OMFG!!!1!1!!1! AAUAYUAYUUYYyuuYYUAuyTAYTU
 * Dependancies: `opencv-python` and `PIL`
   
