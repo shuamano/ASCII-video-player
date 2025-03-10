@@ -43,7 +43,7 @@ for frame_number in range(1, length):
         for x in range(1, resize[0]): # determines ascii char for every pixel in row (iterates through colummns)
             pixel = px[x, y]
 
-            #convert the rgb value of the pixel to a grayscale, then normalize to a range of 70 for the ascii chars
+            #convert the rgb value of the pixel to a grayscale, then normalize to a range of 23 for the ascii chars
             grayscale = ((0.2989 * pixel[0] + 0.5870 * pixel[1] + 0.1140 * pixel[2])/255)*23
             current_line.append(int(grayscale))
 
