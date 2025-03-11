@@ -3,17 +3,22 @@ import statistics
 import cv2
 import time
 import sys
+import os
+
+os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "loglevel;fatal"
 
 #replace with whatever video path you want
-video_path = "image_to_text/【東方】Bad Apple!! ＰＶ【影絵】.mp4"
+video_path = "image_to_text/[ANBU-AonE]_Naruto_01_[ED304340].avi"
 cap = cv2.VideoCapture(video_path)
 length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+avg_frame_time = []
 
 #clear the initial output in the terminal
 print(chr(27) + "[2J")
 
 for frame_number in range(1, length):
     start = time.time()
+
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number-1)
     res, frame = cap.read()
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -29,7 +34,7 @@ for frame_number in range(1, length):
 
     #scaling function
     def scale(width, height):
-        scale_factor = max(width, height) / 130  # set the resolution here
+        scale_factor = max(width, height) / 130  # set the horizontal resolution here (original aspect ratio is maintained)
         new_width = round(width / scale_factor)
         new_height = round(height / scale_factor)
         return new_width, new_height
@@ -67,10 +72,13 @@ for frame_number in range(1, length):
             
     lines_count = text_image.count('\n') + 1
     end = time.time()
-    
+    avg_frame_time.append((end-start)*1000)
+
     #move cursor to start pos and print the next frame (steady ouput)
     sys.stdout.write("\033[F" * len(text_image.split("\n")))
-    sys.stdout.write(f"{text_image}\n Resolution:{resize}, Frame {frame_number}/{length}, Frametime: {(end-start)*1000}ms")
+    for line in text_image.split("\n"):  
+        print(line)
+    sys.stdout.write(f"Resolution:{resize}, Frame {frame_number}/{length}, Frametime: {(end-start)*1000}ms, Avg FT: {statistics.mean(avg_frame_time)}")
     sys.stdout.flush()
     
     
